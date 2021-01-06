@@ -34,6 +34,21 @@ module.exports.loop = function () {
         console.log('Room "'+name+'" has '+Game.rooms[name].energyAvailable+' energy');
     }
 
+    const tower = Game.getObjectById('53adfa289c76f07141c85f7b');
+    if(tower) {
+        const closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+            filter: (structure) => structure.hits < structure.hitsMax
+        });
+        if(closestDamagedStructure) {
+            tower.repair(closestDamagedStructure);
+        }
+        
+        const closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        if(closestHostile) {
+            tower.attack(closestHostile);
+        }
+    }
+
     for(let name in Game.creeps) {
         const creep = Game.creeps[name];
         if(creep.memory.role == 'harvester') {
